@@ -272,6 +272,11 @@
 
 <div class="page">
 
+  <!-- LIVE ARTICLES FROM DB -->
+  <div id="live-articles" style="margin-top:1.5rem"></div>
+
+  <hr class="rule">
+
   <!-- MAIN + SIDEBAR -->
   <div class="grid-main">
 
@@ -533,5 +538,41 @@
   <div style="margin-top:0.3rem; color:#444;">No party line. No corporate filter. No apologies.</div>
 </footer>
 
+<script>
+// Load live articles from D1
+async function loadLiveArticles() {
+  try {
+    const res = await fetch('/api/articles?limit=5');
+    const articles = await res.json();
+    if (!articles.length) return;
+
+    const container = document.getElementById('live-articles');
+    const lead = articles[0];
+    const rest = articles.slice(1);
+
+    let html = `
+      <div class="section-rule">Latest</div>
+      <div class="lead" style="border-top:3px solid var(--red);padding-top:1rem">
+        <div class="kicker">${lead.kicker || lead.category || 'Commentary'}</div>
+        <h2><a href="/article?slug=${lead.slug}" style="color:inherit">${lead.title}</a></h2>
+        ${lead.deck ? `<div class="deck">${lead.deck}</div>` : ''}
+        <div class="byline">${lead.author || 'HotPolitics Staff'} &nbsp;·&nbsp; ${(lead.published_at||'').slice(0,10)}</div>
+      </div>`;
+
+    if (rest.length) {
+      html += `<div class="articles">` + rest.map(a => `
+        <div class="article-card">
+          <div class="kicker">${a.kicker || a.category || 'Commentary'}</div>
+          <h3><a href="/article?slug=${a.slug}" style="color:inherit">${a.title}</a></h3>
+          ${a.deck ? `<p>${a.deck}</p>` : ''}
+          <div class="date">${a.author || 'HotPolitics Staff'} &nbsp;·&nbsp; ${(a.published_at||'').slice(0,10)}</div>
+        </div>`).join('') + `</div>`;
+    }
+
+    container.innerHTML = html;
+  } catch(e) { console.error('Could not load articles:', e); }
+}
+loadLiveArticles();
+</script>
 </body>
 </html>
