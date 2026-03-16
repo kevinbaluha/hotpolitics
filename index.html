@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HotPolitics — Independent Political Commentary</title>
+  <style>
+    :root {
+      --red: #c0392b;
+      --dark: #111;
+      --ink: #1c1c1c;
+      --mid: #444;
+      --rule: #ccc;
+      --bg: #f9f6f0;
+      --white: #fff;
+      --accent: #8b0000;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--ink); }
+    a { color: inherit; text-decoration: none; }
+    a:hover { color: var(--red); }
+
+    /* TOP BAR */
+    .topbar {
+      background: var(--dark);
+      color: #aaa;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.72rem;
+      padding: 0.35rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 0.05em;
+    }
+    .topbar a { color: #aaa; }
+    .topbar a:hover { color: #fff; }
+
+    /* MASTHEAD */
+    .masthead {
+      text-align: center;
+      padding: 1.8rem 1rem 1rem;
+      border-bottom: 3px double var(--dark);
+    }
+    .masthead h1 {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .masthead h1 .hot { color: var(--red); }
+    .masthead .tagline {
+      font-style: italic;
+      color: var(--mid);
+      margin-top: 0.4rem;
+      font-size: 1rem;
+    }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 0.8rem 0;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--mid);
+    }
+    .section-rule::before, .section-rule::after {
+      content: ''; flex: 1; border-top: 1px solid var(--rule);
+    }
+
+    /* NAV */
+    nav {
+      background: var(--dark);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    nav a {
+      color: #ccc;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.6rem 1.2rem;
+      border-right: 1px solid #333;
+      transition: background 0.15s;
+    }
+    nav a:first-child { border-left: 1px solid #333; }
+    nav a:hover { background: var(--red); color: #fff; }
+
+    /* LAYOUT */
+    .page { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
+    .grid-main { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 1.5rem; }
+    @media (max-width: 700px) { .grid-main { grid-template-columns: 1fr; } }
+
+    /* LEAD STORY */
+    .lead { border-bottom: 1px solid var(--rule); padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
+    .lead .kicker {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--red);
+      margin-bottom: 0.4rem;
+    }
+    .lead h2 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      line-height: 1.2;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+    .lead .deck {
+      font-size: 1.05rem;
+      color: var(--mid);
+      line-height: 1.7;
+      margin-bottom: 0.8rem;
+    }
+    .lead .byline {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.78rem;
+      color: #888;
+      border-top: 1px solid var(--rule);
+      padding-top: 0.5rem;
+    }
+
+    /* ARTICLE CARDS */
+    .articles { display: flex; flex-direction: column; gap: 1.2rem; }
+    .article-card { border-bottom: 1px solid var(--rule); padding-bottom: 1.2rem; }
+    .article-card:last-child { border-bottom: none; }
+    .article-card .kicker {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--red);
+      margin-bottom: 0.2rem;
+    }
+    .article-card h3 {
+      font-size: 1.1rem;
+      line-height: 1.3;
+      margin-bottom: 0.4rem;
+      font-weight: bold;
+    }
+    .article-card p {
+      font-size: 0.88rem;
+      color: var(--mid);
+      line-height: 1.6;
+    }
+    .article-card .date {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.72rem;
+      color: #999;
+      margin-top: 0.3rem;
+    }
+
+    /* SIDEBAR */
+    .sidebar { border-left: 1px solid var(--rule); padding-left: 1.5rem; }
+    .sidebar-section { margin-bottom: 1.8rem; }
+    .sidebar-section h4 {
+      font-family: 'Arial', sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border-bottom: 2px solid var(--dark);
+      padding-bottom: 0.3rem;
+      margin-bottom: 0.8rem;
+    }
+    .sidebar-item { margin-bottom: 0.8rem; padding-bottom: 0.8rem; border-bottom: 1px dotted var(--rule); }
+    .sidebar-item:last-child { border-bottom: none; }
+    .sidebar-item h5 { font-size: 0.9rem; line-height: 1.3; margin-bottom: 0.2rem; }
+    .sidebar-item p { font-size: 0.78rem; color: var(--mid); line-height: 1.5; }
+    .sidebar-item .date { font-family: 'Arial', sans-serif; font-size: 0.68rem; color: #999; }
+
+    /* PULLQUOTE */
+    .pullquote {
+      border-top: 3px solid var(--dark);
+      border-bottom: 1px solid var(--dark);
+      margin: 1.5rem 0;
+      padding: 1rem 0;
+      font-size: 1.2rem;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--accent);
+    }
+    .pullquote cite {
+      display: block;
+      font-style: normal;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #888;
+      margin-top: 0.5rem;
+    }
+
+    /* SQUIRMS SECTION */
+    .squirms {
+      background: var(--dark);
+      color: #f0ece4;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    .squirms h3 {
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      margin-bottom: 0.3rem;
+    }
+    .squirms .sub { font-size: 0.8rem; color: #aaa; font-style: italic; margin-bottom: 1rem; font-family: Arial, sans-serif; }
+    .squirms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+    .squirms-entry { border-left: 2px solid var(--red); padding-left: 0.8rem; }
+    .squirms-entry .s-date { font-family: Arial, sans-serif; font-size: 0.68rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; }
+    .squirms-entry .s-head { font-size: 0.88rem; line-height: 1.4; margin-top: 0.2rem; color: #e8e4dc; }
+
+    /* SECOND ROW */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; }
+    @media (max-width: 700px) { .grid-3 { grid-template-columns: 1fr; } }
+    .card { border-top: 3px solid var(--dark); padding-top: 0.8rem; }
+    .card .kicker { font-family: Arial, sans-serif; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red); margin-bottom: 0.3rem; }
+    .card h3 { font-size: 1rem; line-height: 1.3; margin-bottom: 0.5rem; font-weight: bold; }
+    .card p { font-size: 0.84rem; color: var(--mid); line-height: 1.6; }
+    .card .date { font-family: Arial, sans-serif; font-size: 0.68rem; color: #999; margin-top: 0.4rem; }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark);
+      color: #666;
+      text-align: center;
+      padding: 1.5rem;
+      font-family: Arial, sans-serif;
+      font-size: 0.78rem;
+      margin-top: 3rem;
+      border-top: 3px solid var(--red);
+      line-height: 1.8;
+    }
+    footer .footer-links { margin-bottom: 0.5rem; }
+    footer .footer-links a { color: #999; margin: 0 0.8rem; }
+    footer .footer-links a:hover { color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>Independent Political Commentary Since 2000</span>
+  <span>
+    <a href="#foreign-policy">Foreign Policy</a> &nbsp;|&nbsp;
+    <a href="#civil-liberties">Civil Liberties</a> &nbsp;|&nbsp;
+    <a href="#florida">Florida</a> &nbsp;|&nbsp;
+    <a href="#squirms">As The World Squirms</a>
+  </span>
+</div>
+
+<div class="masthead">
+  <h1><span class="hot">Hot</span>Politics</h1>
+  <div class="tagline">News &amp; Commentary — No Party Line. No Corporate Filter.</div>
+  <div class="section-rule">Est. 2000 &nbsp;·&nbsp; Tampa, Florida</div>
+</div>
+
+<nav>
+  <a href="#foreign-policy">Foreign Policy</a>
+  <a href="#civil-liberties">Civil Liberties</a>
+  <a href="#florida">Florida</a>
+  <a href="#squirms">As The World Squirms</a>
+  <a href="#commentary">Commentary</a>
+  <a href="#quotes">Quotes</a>
+  <a href="#archive">Archive</a>
+</nav>
+
+<div class="page">
+
+  <!-- MAIN + SIDEBAR -->
+  <div class="grid-main">
+
+    <!-- MAIN COLUMN -->
+    <main>
+
+      <!-- LEAD STORY -->
+      <div class="lead" id="foreign-policy">
+        <div class="kicker">Iraq War &nbsp;·&nbsp; Foreign Policy</div>
+        <h2>Washington Chickenhawks Are "Cooking the Books" on the Iraq Threat</h2>
+        <div class="deck">An attack on Iraq is likely to produce "blowback" — terrorist attacks on the U.S. homeland and U.S. interests abroad. The CIA says so. The administration isn't listening.</div>
+        <p>The view of U.S. intelligence officials, summarized in a letter written by CIA Director George Tenet, suggests that an attack on Baghdad is likely to trigger the one thing President Bush says he is trying to prevent: the use of weapons of mass destruction.</p>
+        <br>
+        <p>The classified CIA report delivered to the Senate Intelligence Committee stated that the likelihood of Iraq launching an unprovoked attack on the U.S. was <em>low</em>. But should Saddam conclude that a U.S.-led attack could no longer be deterred, "he probably would become much less constrained in adopting terrorist actions" — and might help Islamic militants use weapons of mass destruction as "his last chance to exact vengeance."</p>
+
+        <div class="pullquote">
+          "What is there left to say about this onrushing war? It isn't in our interests; it has nothing to do with getting the terrorists responsible for 9/11; it's the first step on the road to Empire; it'll wreck our economy, embolden Bin Laden, and alienate whatever friends we might have left in the world."
+          <cite>— Justin Raimondo, Antiwar.com &nbsp;·&nbsp; October 8, 2002</cite>
+        </div>
+
+        <p><strong>Call Congress. They are feckless, self-serving cowards who have allowed the abrogation of our Constitution and the hijacking of our foreign policy.</strong> The only language the politicians understand is the threat of popular outrage. Call your congressman: So, you want to get re-elected? Then vote against this war — or else.</p>
+        <div class="byline">Source: Times of London, CIA Senate Intelligence Briefing &nbsp;·&nbsp; October 10, 2002</div>
+      </div>
+
+      <!-- ARTICLE LIST -->
+      <div class="articles">
+
+        <div class="article-card">
+          <div class="kicker">Nobel Peace Prize</div>
+          <h3>Jimmy Carter — Man of Peace — Wins Nobel Prize</h3>
+          <p>The award is a direct repudiation of Washington's confrontational and militaristic foreign policy. "It should be interpreted as a criticism of the line that the current administration has taken," said Gunnar Berge, chairman of the Nobel committee. "It's a kick in the leg to all that follow the same line as the United States."</p>
+          <div class="date">October 11, 2002 &nbsp;·&nbsp; Sydney Morning Herald</div>
+        </div>
+
+        <div class="article-card" id="civil-liberties">
+          <div class="kicker">Civil Liberties &nbsp;·&nbsp; Surveillance</div>
+          <h3>Tampa's Orwellian Experiment: 36 Cameras Scan Every Face in Ybor City</h3>
+          <p>Tampa's Mayor and City Council have quietly conspired to install an unprecedented surveillance system that intimately scans and maps the faces and identity of all visitors to the city's adult entertainment district. Tampa's political lightweights have transformed an already-struggling Ybor City into a Zero-Privacy police zone — more intrusive, arguably, than under the old Soviet or Chinese regimes. Zero tolerance. Zero growth. Zero respect for privacy.</p>
+          <div class="date">2001 &nbsp;·&nbsp; HotPolitics.com</div>
+        </div>
+
+        <div class="article-card">
+          <div class="kicker">Iraq Occupation</div>
+          <h3>"Bring Them Home Now!" — Soldiers' Families Mobilize as Casualties Mount</h3>
+          <p>As daily U.S. soldier deaths continue in Iraq, families of deployed troops have begun organizing nationally to demand withdrawal. Meanwhile, a RAND Corporation report predicts a "rosy future for the terrorism business" — Washington's Forever War shows no signs of ending.</p>
+          <div class="date">August 14, 2003 &nbsp;·&nbsp; As The World Squirms</div>
+        </div>
+
+        <div class="article-card">
+          <div class="kicker">War Crimes</div>
+          <h3>US Colonel Kidnaps, Holds Family of Iraqi General Hostage</h3>
+          <p>In a case that drew international condemnation, a U.S. military colonel detained the family members of an Iraqi general in an effort to force his surrender. The incident prompted war crimes questions that the administration quickly buried. "Calculated is not collateral" — as the occupation deepens, the line between counterinsurgency and collective punishment blurs beyond recognition.</p>
+          <div class="date">July 30, 2003 &nbsp;·&nbsp; As The World Squirms</div>
+        </div>
+
+        <div class="article-card" id="florida">
+          <div class="kicker">Florida &nbsp;·&nbsp; Tampa</div>
+          <h3>Attendance Plummets at Florida Aquarium — Tampa Taxpayers Engulfed by Losses</h3>
+          <p>In addition to paying 100% of the annual $6.7 million "capital budget" (i.e., mortgage), the Tampa City Council's additional annual "operating budget" subsidy could balloon to $1,000,000 or more. Taxpayers assumed 100% of economic risk. City transportation bureaucrats, meanwhile, secured cushy new jobs and inflated salaries to oversee the $53 million Ybor City trolley — a 2.3-mile system no one rides.</p>
+          <div class="date">September 17, 2002 &nbsp;·&nbsp; St. Petersburg Times</div>
+        </div>
+
+        <div class="article-card">
+          <div class="kicker">Guantanamo</div>
+          <h3>Bread and Circuses: Bush Designates First Victims for Washington's Immoral "Show Trials"</h3>
+          <p>The administration has designated the first six detainees for military commissions at Guantanamo Bay — proceedings that legal scholars across the political spectrum have called a fundamental violation of due process. Meanwhile, the Red Cross urges the U.S. to clarify the status of three dozen Iraqi scientists-prisoners held in unknown conditions near Baghdad — Washington's own "disappeared."</p>
+          <div class="date">July 4, 2003 &nbsp;·&nbsp; As The World Squirms</div>
+        </div>
+
+        <div class="article-card">
+          <div class="kicker">Empire Watch</div>
+          <h3>Washington Suspends Military Aid to 35 Countries That Supported International Criminal Court</h3>
+          <p>In a breathtaking display of imperial hubris, the U.S. suspended military assistance to 35 nations that ratified the International Criminal Court treaty and refused to exempt American personnel from potential prosecution. The message from Washington: international law is for everyone else.</p>
+          <div class="date">July 2, 2003 &nbsp;·&nbsp; As The World Squirms</div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-section" id="commentary">
+        <h4>Commentary</h4>
+
+        <div class="sidebar-item">
+          <h5>"It's the Foreign Policy, Stupid" — Myth and Denial in the War on Terrorism</h5>
+          <p>Stirring the Pot — News from the Fringe of Empire. Why Washington's post-9/11 strategy has made America measurably less safe.</p>
+          <div class="date">August 17, 2003</div>
+        </div>
+
+        <div class="sidebar-item">
+          <h5>Afghanistan: "Out of Control"</h5>
+          <p>16 U.S. troops killed in Taliban attacks as Syria and Saudi Arabia denounce U.S. policy. Washington holds the key to defusing nuclear tensions in Korea — but refuses to use it.</p>
+          <div class="date">August 11, 2003</div>
+        </div>
+
+        <div class="sidebar-item">
+          <h5>Mourning in America — Is This Our Last Independence Day Before the Advent of Empire?</h5>
+          <p>What's happened to America? A July 4th reflection on republic, empire, and the road not taken.</p>
+          <div class="date">July 6, 2003</div>
+        </div>
+
+        <div class="sidebar-item">
+          <h5>General Schwarzkopf &amp; Robert Gates: Why the Invasion of Iraq Is a Disaster</h5>
+          <p>An extraordinary video interview — two veterans of the first Gulf War explain why Washington's occupation of Iraq will end in catastrophe for America.</p>
+          <div class="date">August 7, 2003</div>
+        </div>
+
+        <div class="sidebar-item">
+          <h5>Saving Private Lynch: She Was Saved by the Kindness of Iraqis</h5>
+          <p>The Pentagon's heroic rescue narrative unravels. The real story of what happened at the hospital — and who actually helped her.</p>
+          <div class="date">July 12, 2003</div>
+        </div>
+
+      </div>
+
+      <div class="sidebar-section" id="quotes">
+        <h4>Historic Quotes — Power &amp; Manipulation</h4>
+
+        <div class="sidebar-item">
+          <h5>"The only worthwhile yardstick of the collective efforts of journalists is what the circulation trends are."</h5>
+          <p>Stuart Garner, President &amp; CEO, Thomson Newspapers — as newspaper sales "desperately struggle to stand still."</p>
+          <div class="date">November 15, 1999</div>
+        </div>
+
+        <div class="sidebar-item">
+          <h5>"I never went to a journalism school, and it never did me any harm."</h5>
+          <p>On the death of the news monopoly — and how the internet broke it wide open. <em>The Internet and the Death of the News Monopoly</em>, by J. Orlin Grabbe.</p>
+        </div>
+
+        <div class="sidebar-item">
+          <h5>Hiroshima Mayor: Washington "Worships Nuclear Weapons as God"</h5>
+          <p>The mayor of Hiroshima accuses the United States of threatening world peace through its nuclear posture on the 58th anniversary of the atomic bombing.</p>
+          <div class="date">August 7, 2003</div>
+        </div>
+
+      </div>
+
+      <div class="sidebar-section">
+        <h4>Quick Hits</h4>
+        <div class="sidebar-item">
+          <h5>Canadians Vote George Bush Least-Liked U.S. President</h5>
+          <div class="date">July 12, 2003</div>
+        </div>
+        <div class="sidebar-item">
+          <h5>U.S. Unemployment Soars to 9-Year High</h5>
+          <div class="date">July 3, 2003 — Happy 4th!</div>
+        </div>
+        <div class="sidebar-item">
+          <h5>Sharon "Dismisses" Rice's Criticism of Israel's "Berlin Wall"</h5>
+          <div class="date">June 30, 2003</div>
+        </div>
+        <div class="sidebar-item">
+          <h5>ECHELON — America's Global Snoop: What the NSA Hears</h5>
+          <p>The ACLU's comprehensive guide to the NSA's mass interception program — years before the public knew its full scope.</p>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- AS THE WORLD SQUIRMS -->
+  <div class="squirms" id="squirms">
+    <h3>As The World Squirms</h3>
+    <div class="sub">Political E-Zine — National &amp; International News, Comment and More</div>
+    <div class="squirms-grid">
+      <div class="squirms-entry">
+        <div class="s-date">August 17, 2003</div>
+        <div class="s-head">"It's the Foreign Policy, Stupid!" — Myth and Denial in the War on Terrorism</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">August 14, 2003</div>
+        <div class="s-head">"Bring Them Home Now!" — Soldiers' Families Mobilize</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">August 11, 2003</div>
+        <div class="s-head">Afghanistan "Out of Control" — Washington Holds Key to Korea, Refuses to Use It</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">August 7, 2003</div>
+        <div class="s-head">Schwarzkopf &amp; Gates: Why Iraq Is a Disaster — Hiroshima Mayor on Nuclear Worship</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">July 30, 2003</div>
+        <div class="s-head">War Crime: US Colonel Kidnaps Iraqi General's Family — Botched Raid Becomes Massacre</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">July 23, 2003</div>
+        <div class="s-head">Saddam's Sons Dead — But Attacks Continue. "Don" Rumsfeld: Terrorist-in-Chief?</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">July 20, 2003</div>
+        <div class="s-head">Sunday Morning: 16 Dead in Afghanistan. Washington's "Disappeared" — Scientists Held in Unknown Conditions</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">July 12, 2003</div>
+        <div class="s-head">Eden's Long Gone — Saving Private Lynch: Saved by the Kindness of Iraqis</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">July 6, 2003</div>
+        <div class="s-head">Mourning in America — Is This Our Last Independence Day Before Empire?</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">July 4, 2003</div>
+        <div class="s-head">Bread and Circuses — First Guantanamo "Show Trial" Victims Designated. The 7 Principles of Government.</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">July 2, 2003</div>
+        <div class="s-head">Wrath of the Imperium — 35 Countries Lose Aid for Supporting International Criminal Court</div>
+      </div>
+      <div class="squirms-entry">
+        <div class="s-date">June 30, 2003</div>
+        <div class="s-head">Iraqi Detentions Violate International Law — Sharon Dismisses Rice on Israel's "Berlin Wall"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-COLUMN ROW -->
+  <div class="grid-3" id="archive">
+
+    <div class="card">
+      <div class="kicker">Internet &amp; Media</div>
+      <h3>The Internet and the Death of the News Monopoly</h3>
+      <p>Newspaper sales are "desperately struggling to stand still" even as population and households grow. The internet has shattered the gatekeepers' grip — and the political implications are only beginning to unfold. Essay by J. Orlin Grabbe.</p>
+      <div class="date">2001</div>
+    </div>
+
+    <div class="card">
+      <div class="kicker">Israel / Palestine</div>
+      <h3>Israel Will Not Sacrifice for U.S. — Sharon Beats Abbas in Battle for Bush</h3>
+      <p>America's #1 foreign aid recipient — $10 billion and counting — continues to expand settlements while U.S. diplomats offer carefully calibrated public criticism with no consequences. The UK's Independent reports on the widening gap between Washington's stated policy and its actual leverage.</p>
+      <div class="date">2002–2003</div>
+    </div>
+
+    <div class="card">
+      <div class="kicker">Surveillance State</div>
+      <h3>Weapons of Mass Compliance: Agony-Inducing Tools That Will Control Your Disorderly Tendencies</h3>
+      <p>From facial recognition cameras in Tampa to ECHELON's global intercepts to new "crowd control" devices — the architecture of the surveillance state was being assembled in plain sight. HotPolitics was watching before watching was fashionable.</p>
+      <div class="date">2001–2003</div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="#foreign-policy">Foreign Policy</a>
+    <a href="#civil-liberties">Civil Liberties</a>
+    <a href="#florida">Florida</a>
+    <a href="#squirms">As The World Squirms</a>
+    <a href="#archive">Archive</a>
+    <a href="https://web.archive.org/web/*/hotpolitics.com" target="_blank">Wayback Machine ↗</a>
+  </div>
+  <div>HotPolitics.com &nbsp;·&nbsp; Independent Political Commentary &nbsp;·&nbsp; Est. 2000, Tampa, Florida</div>
+  <div style="margin-top:0.3rem; color:#444;">No party line. No corporate filter. No apologies.</div>
+</footer>
+
+</body>
+</html>

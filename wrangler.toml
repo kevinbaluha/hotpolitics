@@ -1,0 +1,11 @@
+name = "hotpolitics-new"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hotpolitics-db"
+database_id = "86634aea-baf7-4708-b2b3-95c8735f74b6"
+
+[vars]
+SITE_NAME = "HotPolitics"

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HotPolitics — Admin</title>
+  <style>
+    :root {
+      --red: #c0392b;
+      --dark: #111;
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #e8e4dc;
+      --muted: #888;
+      --accent: #e74c3c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    a { color: var(--accent); text-decoration: none; }
+
+    /* LOGIN */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center; min-height: 100vh;
+    }
+    .login-box {
+      background: var(--surface); border: 1px solid var(--border); padding: 2.5rem;
+      width: 360px; text-align: center;
+    }
+    .login-box h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+    .login-box h1 span { color: var(--red); }
+    .login-box p { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+    .login-box input {
+      width: 100%; padding: 0.75rem 1rem; background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); font-size: 1rem; margin-bottom: 1rem; font-family: monospace;
+    }
+    .login-box input:focus { outline: none; border-color: var(--red); }
+    .btn {
+      background: var(--red); color: #fff; border: none; padding: 0.75rem 1.5rem;
+      font-size: 0.9rem; cursor: pointer; font-family: Arial, sans-serif;
+      text-transform: uppercase; letter-spacing: 0.08em; width: 100%;
+    }
+    .btn:hover { background: var(--accent); }
+    .btn-sm {
+      background: var(--red); color: #fff; border: none; padding: 0.4rem 0.9rem;
+      font-size: 0.78rem; cursor: pointer; font-family: Arial, sans-serif;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .btn-ghost {
+      background: transparent; color: var(--muted); border: 1px solid var(--border);
+      padding: 0.4rem 0.9rem; font-size: 0.78rem; cursor: pointer; font-family: Arial, sans-serif;
+    }
+    .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+    #login-error { color: var(--accent); font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+
+    /* APP SHELL */
+    #app { display: none; height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      background: var(--dark); border-bottom: 2px solid var(--red);
+      padding: 0.7rem 1.5rem; display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar h1 { font-size: 1.3rem; }
+    .topbar h1 span { color: var(--red); }
+    .topbar .actions { display: flex; gap: 0.8rem; align-items: center; }
+    .tabs {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; padding: 0 1.5rem;
+    }
+    .tab {
+      padding: 0.7rem 1.2rem; font-family: Arial, sans-serif; font-size: 0.8rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .tab.active { color: var(--text); border-color: var(--red); }
+    .tab:hover:not(.active) { color: var(--text); }
+    .content { flex: 1; overflow: hidden; display: flex; }
+
+    /* WRITE TAB */
+    #write-panel {
+      display: flex; width: 100%; height: 100%;
+    }
+    /* Chat */
+    .chat-col {
+      width: 400px; min-width: 320px; display: flex; flex-direction: column;
+      border-right: 1px solid var(--border); background: var(--surface);
+    }
+    .chat-header {
+      padding: 0.8rem 1rem; border-bottom: 1px solid var(--border);
+      font-family: Arial, sans-serif; font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted);
+    }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem;
+    }
+    .msg { max-width: 90%; }
+    .msg.user { align-self: flex-end; }
+    .msg.assistant { align-self: flex-start; }
+    .msg-bubble {
+      padding: 0.7rem 1rem; font-size: 0.9rem; line-height: 1.6;
+      border-radius: 2px;
+    }
+    .msg.user .msg-bubble { background: var(--red); color: #fff; }
+    .msg.assistant .msg-bubble { background: var(--border); color: var(--text); }
+    .msg-bubble pre { white-space: pre-wrap; font-size: 0.8rem; }
+    .use-draft-btn {
+      margin-top: 0.5rem; display: none;
+    }
+    .chat-input-row {
+      padding: 0.8rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem;
+    }
+    .chat-input-row textarea {
+      flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 0.6rem 0.8rem; font-family: Georgia, serif; font-size: 0.9rem;
+      resize: none; height: 60px;
+    }
+    .chat-input-row textarea:focus { outline: none; border-color: var(--red); }
+    /* Editor */
+    .editor-col {
+      flex: 1; display: flex; flex-direction: column; padding: 1.5rem; gap: 0.8rem;
+      overflow-y: auto;
+    }
+    .field-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .field-group label {
+      font-family: Arial, sans-serif; font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted);
+    }
+    .field-group input, .field-group select, .field-group textarea {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 0.6rem 0.8rem; font-family: Georgia, serif; font-size: 0.95rem;
+    }
+    .field-group input:focus, .field-group textarea:focus, .field-group select:focus {
+      outline: none; border-color: var(--red);
+    }
+    #body-editor { height: 300px; resize: vertical; font-size: 0.9rem; line-height: 1.7; }
+    .editor-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; }
+    .editor-actions .save-status { font-size: 0.8rem; color: var(--muted); font-family: Arial, sans-serif; }
+
+    /* ARTICLES TAB */
+    #articles-panel { display: none; width: 100%; padding: 1.5rem; overflow-y: auto; }
+    .articles-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+    .articles-header h2 { font-size: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th {
+      background: var(--surface); font-family: Arial, sans-serif; font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid var(--border);
+    }
+    td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:hover td { background: var(--surface); }
+    .badge {
+      display: inline-block; padding: 0.2rem 0.5rem; font-size: 0.68rem; font-family: Arial, sans-serif;
+      text-transform: uppercase; letter-spacing: 0.06em; border-radius: 2px;
+    }
+    .badge.published { background: #1a3a1a; color: #5a5; }
+    .badge.draft { background: #2a2a1a; color: #aa5; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    .thinking { color: var(--muted); font-style: italic; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1><span>Hot</span>Politics</h1>
+    <p>Editorial Admin</p>
+    <input type="password" id="password-input" placeholder="Password" autocomplete="current-password">
+    <button class="btn" onclick="login()">Enter</button>
+    <div id="login-error">Incorrect password</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+  <div class="topbar">
+    <h1><span>Hot</span>Politics <span style="color:#555;font-size:0.7rem;font-weight:normal;margin-left:0.5rem;">EDITORIAL</span></h1>
+    <div class="actions">
+      <a href="/" target="_blank" style="font-family:Arial;font-size:0.78rem;color:#888;">View Site ↗</a>
+      <button class="btn-ghost" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('write')">✍ Write</div>
+    <div class="tab" onclick="showTab('articles')">📰 Articles</div>
+  </div>
+
+  <div class="content">
+
+    <!-- WRITE PANEL -->
+    <div id="write-panel">
+
+      <!-- CHAT -->
+      <div class="chat-col">
+        <div class="chat-header">AI Editorial Assistant</div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="msg assistant">
+            <div class="msg-bubble">
+              Hey — ready to write. Tell me what you want to cover and I'll draft it.<br><br>
+              Try: <em>"Write a piece about [topic]"</em> or <em>"Give me 3 headline ideas about [issue]"</em> or just ask me anything.
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea id="chat-input" placeholder="Tell me what to write..." onkeydown="chatKeydown(event)"></textarea>
+          <button class="btn-sm" onclick="sendChat()">Send</button>
+        </div>
+      </div>
+
+      <!-- EDITOR -->
+      <div class="editor-col">
+        <div class="field-group">
+          <label>Kicker (category label)</label>
+          <input type="text" id="ed-kicker" placeholder="e.g. Foreign Policy · Iraq">
+        </div>
+        <div class="field-group">
+          <label>Headline *</label>
+          <input type="text" id="ed-title" placeholder="Article headline">
+        </div>
+        <div class="field-group">
+          <label>Deck (subheadline)</label>
+          <input type="text" id="ed-deck" placeholder="A sentence or two expanding on the headline">
+        </div>
+        <div class="field-group">
+          <label>Body *</label>
+          <textarea id="body-editor" placeholder="Article body — plain text or HTML"></textarea>
+        </div>
+        <div class="field-group">
+          <label>Category</label>
+          <select id="ed-category">
+            <option value="commentary">Commentary</option>
+            <option value="foreign-policy">Foreign Policy</option>
+            <option value="civil-liberties">Civil Liberties</option>
+            <option value="florida">Florida</option>
+            <option value="economy">Economy</option>
+            <option value="empire-watch">Empire Watch</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Author</label>
+          <input type="text" id="ed-author" value="HotPolitics Staff">
+        </div>
+        <input type="hidden" id="ed-id" value="">
+        <div class="editor-actions">
+          <button class="btn-sm" onclick="saveArticle(false)">Save Draft</button>
+          <button class="btn-sm" style="background:#2a6a2a" onclick="saveArticle(true)">Publish</button>
+          <button class="btn-ghost" onclick="clearEditor()">Clear</button>
+          <span class="save-status" id="save-status"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ARTICLES PANEL -->
+    <div id="articles-panel">
+      <div class="articles-header">
+        <h2>All Articles</h2>
+        <button class="btn-sm" onclick="showTab('write'); clearEditor()">+ New Article</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="articles-tbody">
+          <tr><td colspan="5" style="color:#555;text-align:center;padding:2rem;">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let pw = '';
+let chatHistory = [];
+
+// AUTH
+function login() {
+  const val = document.getElementById('password-input').value;
+  fetch('/api/admin/articles', { headers: { 'Authorization': 'Bearer ' + val } })
+    .then(r => {
+      if (r.ok) {
+        pw = val;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        document.getElementById('app').style.flexDirection = 'column';
+        loadArticles();
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+      }
+    });
+}
+function logout() { pw = ''; location.reload(); }
+document.getElementById('password-input').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+// TABS
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['write','articles'][i] === name);
+  });
+  document.getElementById('write-panel').style.display = name === 'write' ? 'flex' : 'none';
+  document.getElementById('articles-panel').style.display = name === 'articles' ? 'block' : 'none';
+  if (name === 'articles') loadArticles();
+}
+// Init
+document.getElementById('write-panel').style.display = 'flex';
+document.getElementById('articles-panel').style.display = 'none';
+
+// CHAT
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  appendMsg('user', msg);
+  const thinking = appendMsg('assistant', '<span class="thinking">Thinking...</span>');
+
+  chatHistory.push({ role: 'user', content: msg });
+
+  try {
+    const res = await fetch('/api/admin/write', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pw },
+      body: JSON.stringify({ message: msg, history: chatHistory.slice(-10) }),
+    });
+    const data = await res.json();
+    const reply = data.reply || data.error || 'No response';
+    chatHistory.push({ role: 'assistant', content: reply });
+
+    // Render reply — strip json blocks for display
+    const displayReply = reply.replace(/```json[\s\S]*?```/g, '📄 <em>Article draft generated — loaded in editor</em>');
+    thinking.querySelector('.msg-bubble').innerHTML = displayReply.replace(/\n/g, '<br>');
+
+    // Load draft into editor if present
+    if (data.article) {
+      loadDraft(data.article);
+      const btn = document.createElement('button');
+      btn.className = 'btn-sm use-draft-btn';
+      btn.style.display = 'inline-block';
+      btn.textContent = '→ Load in Editor';
+      btn.onclick = () => loadDraft(data.article);
+      thinking.appendChild(btn);
+    }
+  } catch (e) {
+    thinking.querySelector('.msg-bubble').textContent = 'Error: ' + e.message;
+  }
+}
+
+function appendMsg(role, html) {
+  const container = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.innerHTML = '<div class="msg-bubble">' + html + '</div>';
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+function loadDraft(article) {
+  if (article.title) document.getElementById('ed-title').value = article.title;
+  if (article.kicker) document.getElementById('ed-kicker').value = article.kicker;
+  if (article.deck) document.getElementById('ed-deck').value = article.deck;
+  if (article.body) document.getElementById('body-editor').value = article.body;
+  if (article.category) document.getElementById('ed-category').value = article.category;
+  document.getElementById('ed-id').value = '';
+  document.getElementById('save-status').textContent = 'Draft loaded from AI — review and save';
+}
+
+// EDITOR
+function clearEditor() {
+  ['ed-title','ed-kicker','ed-deck','body-editor','ed-id'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('ed-author').value = 'HotPolitics Staff';
+  document.getElementById('ed-category').value = 'commentary';
+  document.getElementById('save-status').textContent = '';
+}
+
+async function saveArticle(publish) {
+  const title = document.getElementById('ed-title').value.trim();
+  const body = document.getElementById('body-editor').value.trim();
+  if (!title || !body) { alert('Title and body are required'); return; }
+
+  const payload = {
+    id: document.getElementById('ed-id').value || null,
+    title,
+    kicker: document.getElementById('ed-kicker').value,
+    deck: document.getElementById('ed-deck').value,
+    body,
+    category: document.getElementById('ed-category').value,
+    author: document.getElementById('ed-author').value,
+    published: publish,
+  };
+
+  const status = document.getElementById('save-status');
+  status.textContent = 'Saving...';
+
+  try {
+    const res = await fetch('/api/admin/articles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pw },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('ed-id').value = data.id;
+      status.textContent = publish ? '✓ Published' : '✓ Saved as draft';
+      status.style.color = publish ? '#5a5' : '#aa5';
+    } else {
+      status.textContent = 'Error: ' + data.error;
+      status.style.color = '#e44';
+    }
+  } catch (e) {
+    status.textContent = 'Error: ' + e.message;
+    status.style.color = '#e44';
+  }
+}
+
+// ARTICLES LIST
+async function loadArticles() {
+  const tbody = document.getElementById('articles-tbody');
+  try {
+    const res = await fetch('/api/admin/articles', { headers: { 'Authorization': 'Bearer ' + pw } });
+    const articles = await res.json();
+    if (!articles.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#555;text-align:center;padding:2rem;">No articles yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = articles.map(a => `
+      <tr>
+        <td><strong>${a.title}</strong></td>
+        <td style="color:#888;font-size:0.8rem">${a.category}</td>
+        <td><span class="badge ${a.published ? 'published' : 'draft'}">${a.published ? 'Published' : 'Draft'}</span></td>
+        <td style="color:#888;font-size:0.8rem">${(a.published_at || a.created_at || '').slice(0,10)}</td>
+        <td style="display:flex;gap:0.5rem">
+          <button class="btn-sm" onclick="editArticle(${a.id})">Edit</button>
+          <button class="btn-ghost" onclick="deleteArticle(${a.id})" style="color:#e44;border-color:#e44">Del</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="color:#e44">Error loading articles</td></tr>';
+  }
+}
+
+async function editArticle(id) {
+  const res = await fetch('/api/articles?slug=' + id);
+  // Actually fetch full article from admin endpoint
+  const res2 = await fetch('/api/admin/articles', { headers: { 'Authorization': 'Bearer ' + pw } });
+  const all = await res2.json();
+  const a = all.find(x => x.id === id);
+  if (!a) return;
+  // Need full body — fetch by slug from public API not available without slug
+  // Load what we have
+  document.getElementById('ed-id').value = a.id;
+  document.getElementById('ed-title').value = a.title;
+  document.getElementById('ed-kicker').value = a.kicker || '';
+  document.getElementById('ed-category').value = a.category || 'commentary';
+  document.getElementById('save-status').textContent = 'Editing article #' + a.id;
+  showTab('write');
+}
+
+async function deleteArticle(id) {
+  if (!confirm('Delete this article?')) return;
+  await fetch('/api/admin/articles', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pw },
+    body: JSON.stringify({ id }),
+  });
+  loadArticles();
+}
+</script>
+</body>
+</html>
