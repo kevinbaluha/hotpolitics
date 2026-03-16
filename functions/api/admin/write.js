@@ -49,7 +49,9 @@ When you produce a draft article, format it as JSON in a markdown code block lik
   "kicker": "...",
   "deck": "...",
   "body": "...",
-  "category": "foreign-policy|civil-liberties|florida|commentary|economy|empire-watch"
+  "category": "foreign-policy|civil-liberties|florida|commentary|economy|empire-watch",
+  "source_url": "https://... (original article URL if applicable)",
+  "source_label": "Publication name e.g. Reuters, The Guardian, Rachel Blevins / Substack"
 }
 \`\`\`
 

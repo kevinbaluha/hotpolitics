@@ -173,7 +173,29 @@
 
         document.getElementById('article-author').textContent = a.author || 'HotPolitics Staff';
         document.getElementById('article-date').textContent = (a.published_at || '').slice(0, 10);
-        document.getElementById('article-body').innerHTML = a.body;
+        // Source link — shown at top if present
+        if (a.source_url) {
+          const label = a.source_label || 'Original Article';
+          const sourceBtn = document.createElement('p');
+          sourceBtn.style.marginBottom = '1.2rem';
+          sourceBtn.innerHTML = `<a href="${a.source_url}" target="_blank" rel="noopener" style="display:inline-block;background:#c0392b;color:#fff;padding:0.6rem 1.2rem;font-family:Arial,sans-serif;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none">→ Read Original: ${label}</a>`;
+          document.getElementById('article-body').appendChild(sourceBtn);
+        }
+
+        // Body
+        const bodyDiv = document.createElement('div');
+        bodyDiv.innerHTML = a.body;
+        document.getElementById('article-body').appendChild(bodyDiv);
+
+        // Source footer
+        if (a.source_url) {
+          const label = a.source_label || 'Original Article';
+          const footer = document.createElement('p');
+          footer.style.cssText = 'margin-top:1.5rem;padding-top:1rem;border-top:1px solid #ccc;font-size:0.88rem;color:#666';
+          footer.innerHTML = `<strong>Source:</strong> <a href="${a.source_url}" target="_blank" rel="noopener" style="color:#c0392b">${label}</a>`;
+          document.getElementById('article-body').appendChild(footer);
+        }
+        document.getElementById('article-body').style.display = 'block';
         document.getElementById('article-content').style.display = 'block';
       })
       .catch(() => {

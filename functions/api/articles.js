@@ -12,17 +12,17 @@ export async function onRequestGet({ request, env }) {
     let result;
     if (slug) {
       result = await env.DB.prepare(
-        'SELECT * FROM articles WHERE slug = ? AND published = 1'
+        'SELECT id,slug,title,kicker,deck,body,category,author,published_at,source_url,source_label FROM articles WHERE slug = ? AND published = 1'
       ).bind(slug).first();
       if (!result) return json({ error: 'Not found' }, 404);
       return json(result);
     } else if (category) {
       result = await env.DB.prepare(
-        'SELECT id,slug,title,kicker,deck,category,author,published_at FROM articles WHERE published = 1 AND category = ? ORDER BY published_at DESC LIMIT ?'
+        'SELECT id,slug,title,kicker,deck,category,author,published_at,source_url,source_label FROM articles WHERE published = 1 AND category = ? ORDER BY published_at DESC LIMIT ?'
       ).bind(category, limit).all();
     } else {
       result = await env.DB.prepare(
-        'SELECT id,slug,title,kicker,deck,category,author,published_at FROM articles WHERE published = 1 ORDER BY published_at DESC LIMIT ?'
+        'SELECT id,slug,title,kicker,deck,category,author,published_at,source_url,source_label FROM articles WHERE published = 1 ORDER BY published_at DESC LIMIT ?'
       ).bind(limit).all();
     }
     return json(result.results || []);
