@@ -47,7 +47,7 @@ export async function onRequestPost({ request, env }) {
   if (!checkAuth(request, env)) return unauthorized();
   try {
     const body = await request.json();
-    const { id, title, kicker, deck, body: articleBody, category, author, published } = body;
+    const { id, title, kicker, deck, body: articleBody, category, author, published, source_url, source_label } = body;
 
     if (!title || !articleBody) return json({ error: 'title and body required' }, 400);
 
@@ -57,14 +57,14 @@ export async function onRequestPost({ request, env }) {
     if (id) {
       // Update existing
       await env.DB.prepare(
-        `UPDATE articles SET title=?, kicker=?, deck=?, body=?, category=?, author=?, published=?, published_at=COALESCE(published_at, ?) WHERE id=?`
-      ).bind(title, kicker || null, deck || null, articleBody, category || 'commentary', author || 'HotPolitics Staff', published ? 1 : 0, publishedAt, id).run();
+        `UPDATE articles SET title=?, kicker=?, deck=?, body=?, category=?, author=?, published=?, published_at=COALESCE(published_at, ?), source_url=?, source_label=? WHERE id=?`
+      ).bind(title, kicker || null, deck || null, articleBody, category || 'commentary', author || 'HotPolitics Staff', published ? 1 : 0, publishedAt, source_url || null, source_label || null, id).run();
       return json({ ok: true, id, slug });
     } else {
       // Insert new
       const result = await env.DB.prepare(
-        `INSERT INTO articles (slug,title,kicker,deck,body,category,author,published,published_at) VALUES (?,?,?,?,?,?,?,?,?)`
-      ).bind(slug, title, kicker || null, deck || null, articleBody, category || 'commentary', author || 'HotPolitics Staff', published ? 1 : 0, publishedAt).run();
+        `INSERT INTO articles (slug,title,kicker,deck,body,category,author,published,published_at,source_url,source_label) VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+      ).bind(slug, title, kicker || null, deck || null, articleBody, category || 'commentary', author || 'HotPolitics Staff', published ? 1 : 0, publishedAt, source_url || null, source_label || null).run();
       return json({ ok: true, id: result.meta.last_row_id, slug });
     }
   } catch (e) {

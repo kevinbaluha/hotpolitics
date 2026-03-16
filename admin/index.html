@@ -246,6 +246,14 @@
           <label>Author</label>
           <input type="text" id="ed-author" value="HotPolitics Staff">
         </div>
+        <div class="field-group">
+          <label>Original Source URL</label>
+          <input type="text" id="ed-source-url" placeholder="https://...">
+        </div>
+        <div class="field-group">
+          <label>Source Label</label>
+          <input type="text" id="ed-source-label" placeholder="e.g. Reuters, Rachel Blevins / Substack">
+        </div>
         <input type="hidden" id="ed-id" value="">
         <div class="editor-actions">
           <button class="btn-sm" onclick="saveArticle(false)">Save Draft</button>
@@ -379,13 +387,15 @@ function loadDraft(article) {
   if (article.deck) document.getElementById('ed-deck').value = article.deck;
   if (article.body) document.getElementById('body-editor').value = article.body;
   if (article.category) document.getElementById('ed-category').value = article.category;
+  if (article.source_url) document.getElementById('ed-source-url').value = article.source_url;
+  if (article.source_label) document.getElementById('ed-source-label').value = article.source_label;
   document.getElementById('ed-id').value = '';
   document.getElementById('save-status').textContent = 'Draft loaded from AI — review and save';
 }
 
 // EDITOR
 function clearEditor() {
-  ['ed-title','ed-kicker','ed-deck','body-editor','ed-id'].forEach(id => {
+  ['ed-title','ed-kicker','ed-deck','body-editor','ed-id','ed-source-url','ed-source-label'].forEach(id => {
     document.getElementById(id).value = '';
   });
   document.getElementById('ed-author').value = 'HotPolitics Staff';
@@ -407,6 +417,8 @@ async function saveArticle(publish) {
     category: document.getElementById('ed-category').value,
     author: document.getElementById('ed-author').value,
     published: publish,
+    source_url: document.getElementById('ed-source-url').value,
+    source_label: document.getElementById('ed-source-label').value,
   };
 
   const status = document.getElementById('save-status');
