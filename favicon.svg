@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#0d0d0d"/>
+  <!-- Flame -->
+  <path d="M16 3 C16 3 20 8 19 12 C21 10 22 7 21 4 C24 7 26 12 24 17 C26 15 27 12 26 9 C29 13 30 19 27 23 C25 27 21 29 16 29 C11 29 7 27 5 23 C2 19 3 13 6 9 C5 12 6 15 8 17 C6 12 8 7 11 4 C10 7 11 10 13 12 C12 8 14 3 16 3Z" fill="url(#flame)"/>
+  <!-- HP letters hint — small white dot at center -->
+  <circle cx="16" cy="19" r="2.5" fill="white" opacity="0.9"/>
+  <defs>
+    <linearGradient id="flame" x1="16" y1="3" x2="16" y2="29" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fff176"/>
+      <stop offset="30%" stop-color="#ff9800"/>
+      <stop offset="70%" stop-color="#e53935"/>
+      <stop offset="100%" stop-color="#b71c1c"/>
+    </linearGradient>
+  </defs>
+</svg>
